@@ -10,15 +10,25 @@ export default function CartIcon() {
   return (
     <Link
       href="/cart"
-      className="relative bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-110 active:scale-95 border border-white/30 inline-block"
+      className="relative flex items-center gap-2 text-white hover:opacity-90 transition-opacity"
       aria-label="Shopping cart"
     >
-      <span className="text-2xl">🛒</span>
-      {totalItems > 0 && (
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center animate-pulse shadow-md">
-          {totalItems}
-        </span>
-      )}
+      <div className="flex flex-col items-end">
+        <span className="text-sm font-medium">Cart</span>
+        {totalItems > 0 && (
+          <span className="text-xs text-yellow-300">({totalItems} items)</span>
+        )}
+      </div>
+      <div className="relative">
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        {totalItems > 0 && (
+          <span className="absolute -top-2 -right-2 bg-yellow-400 text-[#2874f0] text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+            {totalItems}
+          </span>
+        )}
+      </div>
     </Link>
   );
 }
