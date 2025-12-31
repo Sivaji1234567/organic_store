@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import CartProviderWrapper from "@/components/CartProviderWrapper";
 
 export const metadata: Metadata = {
   title: "Organic Vegetable Store",
@@ -13,7 +14,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <CartProviderWrapper>
+          {children}
+        </CartProviderWrapper>
+      </body>
     </html>
   );
 }
