@@ -1,89 +1,140 @@
-# 🌱 Organic Vegetable Store
+# 🌱 FreshMart - Organic Vegetable Store
 
-A modern Next.js application for an organic vegetable store where users can browse vegetables and add them to their cart. All prices are displayed in Indian Rupees (₹).
+A modern Next.js e-commerce application for an organic vegetable store with PostgreSQL database integration. Built with Flipkart-inspired design.
 
 ## Features
 
-- 🥬 Browse a wide selection of fresh vegetables
-- 🛒 Add vegetables to cart with quantity management
-- 💰 View prices in Indian Rupees (₹)
-- 📱 Responsive design that works on all devices
-- 💾 Cart persistence using localStorage
-- 🎨 Modern and clean UI with Tailwind CSS
+- 🥬 Browse vegetables from PostgreSQL database
+- 🔍 Real-time search functionality
+- 🛒 Shopping cart with quantity management
+- 💰 Prices in Indian Rupees (₹)
+- 📱 Fully responsive design
+- 🎨 Flipkart-inspired modern UI
+- 🗄️ PostgreSQL database integration
+- 🔔 Beautiful toast notifications
 
-## Getting Started
-
-### Prerequisites
+## Prerequisites
 
 - Node.js 18+ installed
+- PostgreSQL database (local or cloud)
 - npm or yarn package manager
 
-### Installation
+## Installation
 
-1. Install dependencies:
+1. **Clone the repository and install dependencies:**
 ```bash
 npm install
 ```
 
-2. Run the development server:
+2. **Set up PostgreSQL database:**
+   - Create a new PostgreSQL database
+   - Update the `.env` file with your database connection string:
+   ```env
+   DATABASE_URL=postgresql://username:password@host:port/database
+   ```
+
+3. **Initialize the database:**
+```bash
+npm run init-db
+```
+
+This will create the `vegetables` table and insert sample data.
+
+4. **Run the development server:**
 ```bash
 npm run dev
 ```
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+5. **Open [http://localhost:3000](http://localhost:3000) in your browser**
 
-### Build for Production
+## Database Setup
 
-```bash
-npm run build
-npm start
+### Manual Setup
+
+If you prefer to set up the database manually:
+
+1. Connect to your PostgreSQL database
+2. Run the SQL script from `lib/schema.sql`
+
+### Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+DATABASE_URL=postgresql://postgres:password@localhost:5432/vegetable_store
+NODE_ENV=development
 ```
 
-## Technologies Used
+## API Endpoints
 
-- **Next.js 14** - React framework
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **React Context API** - State management for cart
+- `GET /api/vegetables` - Get all vegetables (supports `?search=query` parameter)
+- `GET /api/vegetables/[id]` - Get a specific vegetable
+- `POST /api/vegetables` - Create a new vegetable
+- `PUT /api/vegetables/[id]` - Update a vegetable
+- `DELETE /api/vegetables/[id]` - Delete a vegetable
 
 ## Project Structure
 
 ```
 ├── app/
-│   ├── layout.tsx      # Root layout
-│   ├── page.tsx        # Home page with vegetable listing
-│   └── globals.css     # Global styles
+│   ├── api/
+│   │   └── vegetables/      # API routes for vegetables
+│   ├── cart/
+│   │   └── page.tsx        # Cart page
+│   ├── layout.tsx           # Root layout
+│   ├── page.tsx             # Home page
+│   └── globals.css          # Global styles
 ├── components/
-│   ├── VegetableCard.tsx  # Individual vegetable card component
-│   ├── Cart.tsx          # Cart component
-│   └── CartIcon.tsx      # Cart icon with badge
+│   ├── VegetableCard.tsx    # Product card component
+│   ├── Cart.tsx             # Cart component
+│   └── CartIcon.tsx        # Cart icon
 ├── context/
-│   └── CartContext.tsx   # Cart state management
-└── data/
-    └── vegetables.ts     # Vegetable data with prices
+│   ├── CartContext.tsx      # Cart state management
+│   └── ToastContext.tsx    # Toast notifications
+├── lib/
+│   ├── db.ts               # Database connection
+│   └── schema.sql          # Database schema
+└── scripts/
+    └── init-db.ts          # Database initialization script
 ```
 
-## Features in Detail
+## Technologies Used
 
-### Vegetable Listing
-- Displays all available vegetables in a responsive grid
-- Shows vegetable name, emoji, description, price, and unit
-- Each vegetable card has an "Add to Cart" button
+- **Next.js 14** - React framework with App Router
+- **TypeScript** - Type safety
+- **PostgreSQL** - Database
+- **Tailwind CSS** - Styling
+- **React Context API** - State management
 
-### Shopping Cart
-- Click the cart icon in the header to view your cart
-- Add/remove items
-- Adjust quantities using +/- buttons
-- View total price in rupees
-- Cart persists across page refreshes using localStorage
+## Database Schema
 
-## Available Vegetables
+The `vegetables` table has the following structure:
 
-The store includes 15+ vegetables including:
-- Tomato, Potato, Onion, Carrot
-- Cabbage, Cauliflower, Brinjal
-- Capsicum, Cucumber, Spinach
-- And more!
+- `id` (SERIAL PRIMARY KEY)
+- `name` (VARCHAR(255) UNIQUE)
+- `price` (DECIMAL(10, 2))
+- `image` (TEXT)
+- `description` (TEXT)
+- `unit` (VARCHAR(50))
+- `created_at` (TIMESTAMP)
+- `updated_at` (TIMESTAMP)
 
-All prices are in Indian Rupees (₹).
+## Development
 
+```bash
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Initialize database
+npm run init-db
+```
+
+## License
+
+MIT

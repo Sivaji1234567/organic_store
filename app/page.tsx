@@ -1,17 +1,41 @@
 "use client";
 
-import { vegetables } from "@/data/vegetables";
 import VegetableCard from "@/components/VegetableCard";
 import CartIcon from "@/components/CartIcon";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Vegetable } from "@/data/vegetables";
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [vegetables, setVegetables] = useState<Vegetable[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const filteredVegetables = vegetables.filter((veg) =>
-    veg.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    fetchVegetables();
+  }, [searchQuery]);
+
+  const fetchVegetables = async () => {
+    try {
+      setLoading(true);
+      const searchParam = searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : '';
+      const response = await fetch(`/api/vegetables${searchParam}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch vegetables');
+      }
+      
+      const data = await response.json();
+      setVegetables(data.vegetables || []);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Error fetching vegetables:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -85,18 +109,41 @@ export default function Home() {
             {searchQuery ? `Search Results for "${searchQuery}"` : "Fresh Vegetables"}
           </h2>
           <p className="text-sm text-gray-600">
-            {filteredVegetables.length} {filteredVegetables.length === 1 ? 'item' : 'items'} found
+            {loading ? 'Loading...' : `${vegetables.length} ${vegetables.length === 1 ? 'item' : 'items'} found`}
           </p>
         </div>
 
-        {/* Product Grid - Flipkart Style */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-          {filteredVegetables.map((vegetable) => (
-            <VegetableCard key={vegetable.id} vegetable={vegetable} />
-          ))}
-        </div>
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-[#2874f0]"></div>
+            <p className="mt-4 text-gray-600">Loading vegetables...</p>
+          </div>
+        )}
 
-        {filteredVegetables.length === 0 && (
+        {/* Error State */}
+        {error && !loading && (
+          <div className="text-center py-12">
+            <p className="text-red-600 text-lg mb-2">Error: {error}</p>
+            <button
+              onClick={fetchVegetables}
+              className="text-[#2874f0] hover:underline"
+            >
+              Try again
+            </button>
+          </div>
+        )}
+
+        {/* Product Grid - Flipkart Style */}
+        {!loading && !error && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            {vegetables.map((vegetable) => (
+              <VegetableCard key={vegetable.id} vegetable={vegetable} />
+            ))}
+          </div>
+        )}
+
+        {!loading && !error && vegetables.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">No vegetables found matching your search.</p>
           </div>
@@ -148,4 +195,3 @@ export default function Home() {
     </div>
   );
 }
-
